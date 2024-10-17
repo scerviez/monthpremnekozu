@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nekozu Redeem Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #5c6bc0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #3f51b5;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Get your 1 month premium redeem code here!</h1>
+        <p>Enter your Ko-fi payment URL to get your redeem code.</p>
+        
+        <div class="form-group">
+            <label for="payment_url">Ko-fi Payment URL:</label>
+            <input type="text" id="payment_url" placeholder="Enter your Ko-fi payment URL">
+        </div>
+
+        <button class="btn" id="generateBtn">Generate Code</button>
+
+        <div class="result" id="result"></div>
+        <div class="error" id="error"></div>
+        <p>NOTE!: THIS CODE ONLY CAN BE USED IN 1 TIME. IF U ALREADY GET THE CODE QUICK USE AND REDEEM IN ON BOT @NEKOMUBOT OR @NEKOTRANSBOT WITH COMMAND /REDEEM (UR CODE)</p>
+    </div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const paymentUrl = document.getElementById('payment_url').value;
+            
+            if (!paymentUrl) {
+                document.getElementById('error').innerText = 'Please enter a valid payment URL.';
+                return;
+            }
+
+            document.getElementById('error').innerText = ''; // Clear any previous error message
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ payment_url: paymentUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('error').innerText = data.message;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <p><strong>Your Redeem Code:</strong> ${data.redeem_code}</p>
+                        <p><strong>Expiry Date:</strong> ${new Date(data.expiry).toLocaleString()}</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                document.getElementById('error').innerText = `An error occurred: ${error.message}`;
+            });
+        });
+    </script>
+</body>
+</html>
